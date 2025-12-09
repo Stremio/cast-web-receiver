@@ -8,10 +8,6 @@ const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 const context = cast.framework.CastReceiverContext.getInstance();
 
 const LOG_RECEIVER_TAG = 'StremioReceiver';
-const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-
-castDebugLogger.loggerLevelByTags = {};
-castDebugLogger.loggerLevelByTags[LOG_RECEIVER_TAG] = cast.framework.LoggerLevel.DEBUG;
 
 const playerManager = context.getPlayerManager();
 // playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP | COMMAND.GET_STATUS);
@@ -22,38 +18,33 @@ castReceiverOptions.useShakaForHls = true;
 const debug = (message) => castDebugLogger.debug(LOG_RECEIVER_TAG, message);
 
 context.addEventListener(EVENT.READY, () => {
-    if (!castDebugLogger.debugOverlayElement_) {
-        castDebugLogger.setEnabled(true);
-        castDebugLogger.showDebugLogs(true);
-    }
-
-    debug('READY');
+    console.log('READY');
     
     const deviceCapabilities = context.getDeviceCapabilities();
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
-        debug('HDR SUPPORTED');
+        console.log('HDR SUPPORTED');
     }
 
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_DV_SUPPORTED]) {
-        debug('DV SUPPORTED');
+        console.log('DV SUPPORTED');
     }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
-    debug('MEDIA_STATUS');
+    console.log('MEDIA_STATUS');
 });
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
-    debug('LOAD');
+    console.log('LOAD');
     console.log(loadRequestData.media);
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    if (!loadRequestData.media || !loadRequestData.media.contentUrl) {
+    if (!loadRequestData.media || !loadRequestData.media.contentId) {
         error.reason = ERROR_REASON.INVALID_PARAM;
         return error;
     }
 
-    const { origin, searchParams } = new URL(loadRequestData.media.contentUrl);
+    const { origin, searchParams } = new URL(loadRequestData.media.contentId);
     const mediaURL = searchParams.get('mediaURL');
 
     if (mediaURL) {
