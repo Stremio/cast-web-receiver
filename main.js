@@ -15,7 +15,35 @@ const playerManager = context.getPlayerManager();
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
-const debug = (message) => castDebugLogger.debug(LOG_RECEIVER_TAG, message);
+const getSupportedCodecs = () => {
+    const canPlay = (type, codecs) => {
+        Object.entries(codecs)
+            .filter(([codec]) => context.canDisplayType(`${type}/mp4`, codec))
+            .map(([, name]) => name);
+    };
+
+    const videoCodecs = {
+        'avc1.42E01E': 'h264',
+        'hev1.1.6.L150.B0': 'h265',
+        'vp8': 'vp8',
+        'vp9': 'vp9',
+    };
+
+    const audioCodecs = {
+        'mp4a.40.2': 'aac',
+        'mp3': 'mp3',
+        'ac-3': 'ac3',
+        'ec-3': 'eac3',
+        'vorbis': 'vorbis',
+        'opus': 'opus',
+        'flac': 'flac',
+    };
+    
+    return {
+        videoCodecs: canPlay('video', videoCodecs),
+        audioCodecs: canPlay('audio', audioCodecs),
+    };
+};
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
@@ -36,7 +64,6 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     console.log('LOAD');
-    console.log(loadRequestData.media);
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!loadRequestData.media || !loadRequestData.media.contentId) {
@@ -44,19 +71,22 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
         return error;
     }
 
-    const { origin, searchParams } = new URL(loadRequestData.media.contentId);
-    const mediaURL = searchParams.get('mediaURL');
+    const streamUrl = new URL(loadRequestData.media.contentId);
 
-    if (mediaURL) {
-		fetch(`${origin}/hlsv2/probe?mediaURL=${encodeURIComponent(mediaURL)}`)
-			.then((res) => res.json())
-			.then((probe) => {
-				console.log(probe);
-			})
-			.catch((e) => {
-				console.error(e);
-			});
-    }
+    const { videoCodecs, audioCodecs } = getSupportedCodecs();
+    videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
+    audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+
+    loadRequestData.media.contentId = streamUrl.toString();
+
+    // fetch(`${origin}/hlsv2/probe?mediaURL=${encodeURIComponent(mediaURL)}`)
+    //     .then((res) => res.json())
+    //     .then((probe) => {
+    //         console.log(probe);
+    //     })
+    //     .catch((e) => {
+    //         console.error(e);
+    //     });
 
     return loadRequestData;
 
