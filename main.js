@@ -14,7 +14,7 @@ castDebugLogger.loggerLevelByTags = {};
 castDebugLogger.loggerLevelByTags[LOG_RECEIVER_TAG] = cast.framework.LoggerLevel.DEBUG;
 
 const playerManager = context.getPlayerManager();
-playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP | COMMAND.GET_STATUS);
+// playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP | COMMAND.GET_STATUS);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
@@ -46,15 +46,15 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     debug('LOAD');
 
-    const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    if (!loadRequestData.media) {
-        error.reason = ERROR_REASON.INVALID_PARAM;
-        return error;
-    }
+    // const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
+    // if (!loadRequestData.media) {
+    //     error.reason = ERROR_REASON.INVALID_PARAM;
+    //     return error;
+    // }
 
-    if (!loadRequestData.media.contentUrl) {
-        return loadRequestData;
-    }
+    // if (!loadRequestData.media.contentUrl) {
+    //     return loadRequestData;
+    // }
 
     const { origin, searchParams } = new URL(loadRequestData.media.contentUrl);
     const mediaURL = searchParams.get('mediaURL');
@@ -70,9 +70,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
 			});
     }
 
-    return Promise.resolve()
-        .then(() => loadRequestData)
-        .catch((error) => error);
+    return loadRequestData;
 
     // return fetch(loadRequestData.media.contentUrl)
     //     .then((asset) => {
