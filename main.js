@@ -47,14 +47,10 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     debug('LOAD');
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    if (!loadRequestData.media) {
+    if (!loadRequestData.media || !loadRequestData.media.contentUrl) {
         error.reason = ERROR_REASON.INVALID_PARAM;
         return error;
     }
-
-    // if (!loadRequestData.media.contentUrl) {
-    //     return loadRequestData;
-    // }
 
     const { origin, searchParams } = new URL(loadRequestData.media.contentUrl);
     const mediaURL = searchParams.get('mediaURL');
