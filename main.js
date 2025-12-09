@@ -9,11 +9,6 @@ const context = cast.framework.CastReceiverContext.getInstance();
 
 const LOG_TAG = 'StremioReceiver';
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-castDebugLogger.loggerLevelByEvents = {
-    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
-    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
-};
-
 const playerManager = context.getPlayerManager();
 playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP);
 
@@ -21,11 +16,11 @@ const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
 context.addEventListener(EVENT.READY, () => {
-    castDebugLogger.debug(LOG_TAG, 'READY');
-
     if (!castDebugLogger.debugOverlayElement_) {
         castDebugLogger.setEnabled(true);
     }
+
+    castDebugLogger.debug(LOG_TAG, 'READY');
     
     const deviceCapabilities = context.getDeviceCapabilities();
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
@@ -68,7 +63,8 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
 			});
     }
 
-    return fetch(loadRequestData.media.entity)
+    return thirdparty
+        .fetchAssetAndAuth(loadRequestData.media.entity, loadRequestData.credentials)
         .then(asset => {
             if (!asset) {
                 throw ERROR_REASON.INVALID_REQUEST;
