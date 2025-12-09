@@ -31,34 +31,34 @@ context.addEventListener(cast.framework.system.EventType.READY, () => {
     }
 });
 
-playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
-    castDebugLogger.debug(LOG_TAG, request);
+// playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
+//     castDebugLogger.debug(LOG_TAG, request);
 
-    const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    if (!request.media) {
-        error.reason = ERROR_REASON.INVALID_PARAM;
-        return error;
-    }
+//     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
+//     if (!request.media) {
+//         error.reason = ERROR_REASON.INVALID_PARAM;
+//         return error;
+//     }
 
-    if (!request.media.entity) {
-        return request;
-    }
+//     if (!request.media.entity) {
+//         return request;
+//     }
 
-    return thirdparty
-        .fetchAssetAndAuth(request.media.entity, request.credentials)
-        .then((asset) => {
-            if (!asset) {
-                throw ERROR_REASON.INVALID_REQUEST;
-            }
+//     return thirdparty
+//         .fetchAssetAndAuth(request.media.entity, request.credentials)
+//         .then((asset) => {
+//             if (!asset) {
+//                 throw ERROR_REASON.INVALID_REQUEST;
+//             }
 
-            request.media.contentUrl = asset.url;
-            request.media.metadata = asset.metadata;
-            request.media.tracks = asset.tracks;
-            return request;
-        }).catch(reason => {
-            error.reason = reason;
-            return error;
-        });
-});
+//             request.media.contentUrl = asset.url;
+//             request.media.metadata = asset.metadata;
+//             request.media.tracks = asset.tracks;
+//             return request;
+//         }).catch(reason => {
+//             error.reason = reason;
+//             return error;
+//         });
+// });
 
 context.start(castReceiverOptions);
