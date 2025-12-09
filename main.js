@@ -9,6 +9,8 @@ const context = cast.framework.CastReceiverContext.getInstance();
 
 const LOG_RECEIVER_TAG = 'StremioReceiver';
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+
+castDebugLogger.loggerLevelByTags = {};
 castDebugLogger.loggerLevelByTags[LOG_RECEIVER_TAG] = cast.framework.LoggerLevel.DEBUG;
 
 const playerManager = context.getPlayerManager();
