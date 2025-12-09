@@ -7,37 +7,44 @@ const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
 const context = cast.framework.CastReceiverContext.getInstance();
 
-const LOG_TAG = 'StremioReceiver';
+const LOG_RECEIVER_TAG = 'StremioReceiver';
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+castDebugLogger.loggerLevelByTags[LOG_RECEIVER_TAG] = cast.framework.LoggerLevel.DEBUG;
+
 const playerManager = context.getPlayerManager();
 playerManager.setSupportedMediaCommands(COMMAND.LOAD | COMMAND.SEEK | COMMAND.PLAY | COMMAND.PAUSE | COMMAND.STOP);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
+const debug = (message) => {
+    castDebugLogger.debug(LOG_RECEIVER_TAG, message);
+};
+
 context.addEventListener(EVENT.READY, () => {
     if (!castDebugLogger.debugOverlayElement_) {
         castDebugLogger.setEnabled(true);
+        castDebugLogger.showDebugLogs(true);
     }
 
-    castDebugLogger.debug(LOG_TAG, 'READY');
+    debug('READY');
     
     const deviceCapabilities = context.getDeviceCapabilities();
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_HDR_SUPPORTED]) {
-        castDebugLogger.debug(LOG_TAG, 'HDR SUPPORTED');
+        debug('HDR SUPPORTED');
     }
 
     if (deviceCapabilities && deviceCapabilities[CAPABILITIES.IS_DV_SUPPORTED]) {
-        castDebugLogger.debug(LOG_TAG, 'DV SUPPORTED');
+        debug('DV SUPPORTED');
     }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
-    castDebugLogger.debug(LOG_TAG, 'MEDIA_STATUS');
+    debug('MEDIA_STATUS');
 });
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
-    castDebugLogger.debug(LOG_TAG, 'LOAD');
+    debug('LOAD');
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!loadRequestData.media) {
@@ -63,9 +70,8 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
 			});
     }
 
-    return thirdparty
-        .fetchAssetAndAuth(loadRequestData.media.entity, loadRequestData.credentials)
-        .then(asset => {
+    return fetch(loadRequestData.media.entity)
+        .then((asset) => {
             if (!asset) {
                 throw ERROR_REASON.INVALID_REQUEST;
             }
@@ -74,7 +80,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
             loadRequestData.media.metadata = asset.metadata;
             loadRequestData.media.tracks = asset.tracks;
             return loadRequestData;
-        }).catch(reason => {
+        }).catch((error) => {
             error.reason = reason;
             return error;
         });
