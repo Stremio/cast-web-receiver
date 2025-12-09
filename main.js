@@ -46,11 +46,11 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (loadRequestData) => {
     debug('LOAD');
 
-    // const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
-    // if (!loadRequestData.media) {
-    //     error.reason = ERROR_REASON.INVALID_PARAM;
-    //     return error;
-    // }
+    const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
+    if (!loadRequestData.media) {
+        error.reason = ERROR_REASON.INVALID_PARAM;
+        return error;
+    }
 
     // if (!loadRequestData.media.contentUrl) {
     //     return loadRequestData;
