@@ -1,5 +1,6 @@
 const MESSAGE = cast.framework.messages.MessageType;
 const ERROR = cast.framework.messages.ErrorType;
+const EVENT = cast.framework.events.EventType;
 const ERROR_REASON = cast.framework.messages.ErrorType;
 const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
@@ -13,10 +14,16 @@ castDebugLogger.loggerLevelByEvents = {
 };
 
 const playerManager = context.getPlayerManager();
+const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
+playbackConfig.autoResumeNumberOfSegments = 1;
+playerManager.setPlaybackConfig(playbackConfig);
+
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
-context.addEventListener(cast.framework.system.EventType.READY, () => {
+context.addEventListener(EVENT.READY, () => {
+    castDebugLogger.debug(LOG_TAG, 'READY');
+
     if (!castDebugLogger.debugOverlayElement_) {
         castDebugLogger.setEnabled(true);
     }
@@ -30,6 +37,11 @@ context.addEventListener(cast.framework.system.EventType.READY, () => {
         castDebugLogger.debug(LOG_TAG, 'DV SUPPORTED');
     }
 });
+
+playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
+    castDebugLogger.debug(LOG_TAG, 'MEDIA_STATUS');
+});
+
 
 // playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
 //     castDebugLogger.debug(LOG_TAG, request);
