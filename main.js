@@ -1,6 +1,7 @@
 const MESSAGE = cast.framework.messages.MessageType;
 const ERROR = cast.framework.messages.ErrorType;
 const EVENT = cast.framework.events.EventType;
+const COMMAND = cast.framework.messages.Command;
 const ERROR_REASON = cast.framework.messages.ErrorType;
 const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
@@ -17,6 +18,7 @@ const playerManager = context.getPlayerManager();
 const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
 playbackConfig.autoResumeNumberOfSegments = 1;
 playerManager.setPlaybackConfig(playbackConfig);
+playerManager.setSupportedMediaCommands(COMMAND.SEEK | COMMAND.PAUSE);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
