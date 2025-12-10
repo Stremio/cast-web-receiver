@@ -11,7 +11,7 @@ const playerManager = context.getPlayerManager();
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 castReceiverOptions.customNamespaces = {
-    CUSTOM_NAMESPACE: cast.framework.system.MessageType.JSON
+    [CUSTOM_NAMESPACE]: cast.framework.system.MessageType.JSON,
 };
 
 context.addEventListener(EVENT.READY, () => {
