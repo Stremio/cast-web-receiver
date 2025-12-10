@@ -53,7 +53,6 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
-        streamUrl.searchParams.append('forceTranscoding', 1);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
