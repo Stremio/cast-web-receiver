@@ -3,8 +3,6 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
-const CUSTOM_NAMESPACE = 'urn:x-cast:com.stremio.cast';
-
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
@@ -23,34 +21,11 @@ playerManager.setPlaybackConfig(playbackConfig);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
-castReceiverOptions.customNamespaces = {
-    [CUSTOM_NAMESPACE]: cast.framework.system.MessageType.JSON,
-};
 
-let playerLoaded = false;
 let externalTextTracks = [];
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
-});
-
-context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
-    console.log('CUSTOM_MESSAGE', message);
-
-    if (!message.data || !message.data.type || !message.data.arg) {
-        error.reason = ERROR_REASON.INVALID_PARAM;
-        return error;
-    }
-
-    const { type, arg } = message.data;
-
-    if (type === 'externalTextTracks') {
-        if (playerLoaded) {
-            addExternalTextTracks(arg);
-        } else {
-            externalTextTracks = arg;
-        }
-    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
@@ -59,7 +34,6 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     console.log('LOAD', request);
-    playerLoaded = false;
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!request.media || !request.media.contentId) {
@@ -79,7 +53,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
-        streamUrl.searchParams.append('forceTranscoding', 'true');
+        streamUrl.searchParams.append('forceTranscoding', 1);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
@@ -91,7 +65,6 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
 
 playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('PLAYER_LOAD_COMPLETE');
-    playerLoaded = true;
 
     addExternalTextTracks(externalTextTracks);
 
