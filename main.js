@@ -11,6 +11,8 @@ const playerManager = context.getPlayerManager();
 const playbackConfig = (Object.assign(new cast.framework.PlaybackConfig(), playerManager.getPlaybackConfig()));
 playbackConfig.autoResumeNumberOfSegments = 1;
 playbackConfig.enableSmoothLiveRefresh = true;
+
+console.log('playbackConfig', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
