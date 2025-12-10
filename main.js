@@ -1,41 +1,13 @@
 const MESSAGE = cast.framework.messages.MessageType;
+const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
-const COMMAND = cast.framework.messages.Command;
-const EVENT = cast.framework.events.EventType;
-const CAPABILITIES = cast.framework.system.DeviceCapabilities;
 
 const context = cast.framework.CastReceiverContext.getInstance();
-
-const LOG_RECEIVER_TAG = 'StremioReceiver';
-
 const playerManager = context.getPlayerManager();
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
-
-const getSupportedCodecs = () => {
-    const canPlay = (codecs) => {
-        return Object.entries(codecs)
-            .filter(([mediaType]) => context.canDisplayType(mediaType))
-            .map(([, codecName]) => codecName);
-    };
-
-    const videoCodecs = {
-        'video/mp4; codecs="avc1.42E01E"': 'h264',
-        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
-    };
-
-    const audioCodecs = {
-        'audio/mp4; codecs="mp4a.40.5"': 'aac',
-        'audio/mp4; codecs="mp4a.69"': 'mp3',
-    };
-    
-    return {
-        videoCodecs: canPlay('video', videoCodecs),
-        audioCodecs: canPlay('audio', audioCodecs),
-    };
-};
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
@@ -88,3 +60,26 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 });
 
 context.start(castReceiverOptions);
+
+const getSupportedCodecs = () => {
+    const canPlay = (codecs) => {
+        return Object.entries(codecs)
+            .filter(([mediaType]) => context.canDisplayType(mediaType))
+            .map(([, codecName]) => codecName);
+    };
+
+    const videoCodecs = {
+        'video/mp4; codecs="avc1.42E01E"': 'h264',
+        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
+    };
+
+    const audioCodecs = {
+        'audio/mp4; codecs="mp4a.40.5"': 'aac',
+        'audio/mp4; codecs="mp4a.69"': 'mp3',
+    };
+    
+    return {
+        videoCodecs: canPlay('video', videoCodecs),
+        audioCodecs: canPlay('audio', audioCodecs),
+    };
+};
