@@ -59,6 +59,7 @@ playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     console.log('LOAD', request);
+    playerLoaded = false;
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!request.media || !request.media.contentId) {
@@ -124,6 +125,8 @@ const addExternalTextTracks = (externalTextTracks) => {
     });
 
     textTracksManager.addTracks(tracks);
+
+    console.log('ADD_EXTERNAL_TEXT_TRACKS', tracks);
 };
 
 const getSupportedCodecs = () => {
