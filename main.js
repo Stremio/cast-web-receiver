@@ -20,7 +20,7 @@ console.log('PLAYBACK_CONFIG', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
-castReceiverOptions.useShakaForHls = false;
+castReceiverOptions.useShakaForHls = true;
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
