@@ -100,7 +100,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('AUDIO_TRACKS', audioTracks);
 
     const firstAudioTrack = audioTracks[0];
-    firstAudioTrack && textTracksManager.setActiveByIds([firstAudioTrack.trackId]);
+    firstAudioTrack && audioTracksManager.setActiveByIds([firstAudioTrack.trackId]);
 
     const textTracksManager = playerManager.getTextTracksManager();
     const textTracks = textTracksManager.getTracks();
