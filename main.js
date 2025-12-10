@@ -3,8 +3,6 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
-const CUSTOM_NAMESPACE = 'urn:x-cast:com.stremio.cast';
-
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
@@ -23,32 +21,16 @@ playerManager.setPlaybackConfig(playbackConfig);
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
-castReceiverOptions.customNamespaces = {
-    [CUSTOM_NAMESPACE]: cast.framework.system.MessageType.JSON,
-};
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
-});
-
-let externalTextTracks = [];
-context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
-    console.log('CUSTOM_MESSAGE', message);
-
-    if (!message.data || !message.data.type) {
-        error.reason = ERROR_REASON.INVALID_PARAM;
-        return error;
-    }
-
-    if (message.data.type === 'externalTextTracks' && message.data.tracks) {
-        externalTextTracks = message.data.tracks;
-    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
     console.log('MEDIA_STATUS', event);
 });
 
+let externalTextTracks = [];
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
     console.log('LOAD', request);
 
