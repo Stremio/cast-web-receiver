@@ -29,23 +29,16 @@ context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
     }
 
     if (message.data.type === 'externalTextTracks' && message.data.tracks) {
-        externalTextTracks = message.data.tracks.map(({ mimeType, uri, language, label }) => {
-            const track = textTracksManager.createTrack();
-            track.trackContentType = mimeType;
-            track.trackContentId = uri;
-            track.language = language;
-            track.name = label;
-        });
+        externalTextTracks = message.data.tracks;
     }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
-    console.log('MEDIA_STATUS');
+    console.log('MEDIA_STATUS', event);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
-    console.log('LOAD');
-    console.log(request);
+    console.log('LOAD', request);
 
     const error = new cast.framework.messages.ErrorData(ERROR.LOAD_FAILED);
     if (!request.media || !request.media.contentId) {
@@ -77,14 +70,19 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     const textTracks = textTracksManager.getTracks();
     console.log('textTracks', textTracks);
     
-    if (externalTextTracks.length > 0) {
-        textTracksManager.addTracks(externalTextTracks);
-    }
+    const tracks = externalTextTracks.map(({ mimeType, uri, language, label }) => {
+        const track = textTracksManager.createTrack();
+        track.trackContentType = mimeType;
+        track.trackContentId = uri;
+        track.language = language;
+        track.name = label;
+    });
+
+    textTracksManager.addTracks(tracks);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
-    console.log('EDIT_TRACKS_INFO');
-    console.log(request);
+    console.log('EDIT_TRACKS_INFO', request);
 
     return request;
 });
