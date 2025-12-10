@@ -27,6 +27,7 @@ castReceiverOptions.customNamespaces = {
     [CUSTOM_NAMESPACE]: cast.framework.system.MessageType.JSON,
 };
 
+let playerLoaded = false;
 let externalTextTracks = [];
 
 context.addEventListener(EVENT.READY, () => {
@@ -44,7 +45,11 @@ context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
     const { type, arg } = message.data;
 
     if (type === 'externalTextTracks') {
-        externalTextTracks = arg;
+        if (playerLoaded) {
+            addExternalTextTracks(arg);
+        } else {
+            externalTextTracks = arg;
+        }
     }
 });
 
@@ -85,6 +90,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
 
 playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('PLAYER_LOAD_COMPLETE');
+    playerLoaded = true;
 
     const audioTracksManager = playerManager.getAudioTracksManager();
     const audioTracks = audioTracksManager.getTracks();
@@ -94,6 +100,20 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     const textTracks = textTracksManager.getTracks();
     console.log('TEXT_TRACKS', textTracks);
     
+    addExternalTextTracks(externalTextTracks);
+});
+
+playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
+    console.log('EDIT_TRACKS_INFO', request);
+
+    return request;
+});
+
+context.start(castReceiverOptions);
+
+const addExternalTextTracks = (externalTextTracks) => {
+    const textTracksManager = playerManager.getTextTracksManager();
+
     const tracks = externalTextTracks.map(({ mimeType, uri, language, label }) => {
         const track = textTracksManager.createTrack();
         track.trackContentType = mimeType;
@@ -104,15 +124,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     });
 
     textTracksManager.addTracks(tracks);
-});
-
-playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
-    console.log('EDIT_TRACKS_INFO', request);
-
-    return request;
-});
-
-context.start(castReceiverOptions);
+};
 
 const getSupportedCodecs = () => {
     const canPlay = (codecs) => {
