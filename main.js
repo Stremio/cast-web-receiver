@@ -77,11 +77,12 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('PLAYER_LOAD_COMPLETE');
 
     const audioTracksManager = playerManager.getAudioTracksManager();
+    const audioTracks = audioTracksManager.getTracks();
+    console.log('audioTracks', audioTracks);
 
-    const tracks = audioTracksManager.getTracks();
-    console.log(tracks);
-
-    // audioTracksManager.setActiveById(tracks[0].trackId);
+    const textTracksManager = playerManager.getTextTracksManager();
+    const textTracks = textTracksManager.getTracks();
+    console.log('textTracks', textTracks);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_AUDIO_TRACKS, (request) => {
