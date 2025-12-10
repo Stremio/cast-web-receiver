@@ -85,8 +85,8 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('textTracks', textTracks);
 });
 
-playerManager.setMessageInterceptor(MESSAGE.EDIT_AUDIO_TRACKS, (request) => {
-    console.log('EDIT_AUDIO_TRACKS');
+playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
+    console.log('EDIT_TRACKS_INFO');
     console.log(request);
 });
 
