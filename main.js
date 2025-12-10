@@ -3,14 +3,24 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
+const CUSTOM_NAMESPACE = 'urn:x-cast:com.stremio.cast';
+
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
 const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
+castReceiverOptions.customNamespaces = {
+    CUSTOM_NAMESPACE: cast.framework.system.MessageType.JSON
+};
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
+});
+
+context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
+    console.log(CUSTOM_NAMESPACE);
+    console.log(message);
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
