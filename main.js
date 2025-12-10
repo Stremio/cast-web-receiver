@@ -15,27 +15,21 @@ const castReceiverOptions = new cast.framework.CastReceiverOptions();
 castReceiverOptions.useShakaForHls = true;
 
 const getSupportedCodecs = () => {
-    const canPlay = (type, codecs) => {
+
+    const canPlay = (codecs) => {
         return Object.entries(codecs)
-            .filter(([codec]) => context.canDisplayType(`${type}/mp4`, codec))
-            .map(([, name]) => name);
+            .filter(([mediaType]) => context.canDisplayType(mediaType))
+            .map(([, codecName]) => codecName);
     };
 
     const videoCodecs = {
-        'avc1.42E01E': 'h264',
-        'hev1.1.6.L150.B0': 'h265',
-        'vp8': 'vp8',
-        'vp9': 'vp9',
+        'video/mp4; codecs="avc1.42E01E, mp4a.40.5"': 'h264',
+        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
     };
 
     const audioCodecs = {
-        'mp4a.40.2': 'aac',
-        'mp3': 'mp3',
-        'ac-3': 'ac3',
-        'ec-3': 'eac3',
-        'vorbis': 'vorbis',
-        'opus': 'opus',
-        'flac': 'flac',
+        'audio/mp4; codecs="mp4a.40.5"': 'aac',
+        'audio/mp4; codecs="mp4a.69"': 'mp3',
     };
     
     return {
@@ -88,7 +82,7 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     console.log('EDIT_TRACKS_INFO');
     console.log(request);
-    
+
     return request;
 });
 
