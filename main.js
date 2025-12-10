@@ -93,15 +93,21 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
     console.log('PLAYER_LOAD_COMPLETE');
     playerLoaded = true;
 
+    addExternalTextTracks(externalTextTracks);
+
     const audioTracksManager = playerManager.getAudioTracksManager();
     const audioTracks = audioTracksManager.getTracks();
     console.log('AUDIO_TRACKS', audioTracks);
 
+    const firstAudioTrack = audioTracks[0];
+    firstAudioTrack && textTracksManager.setActiveByIds([firstAudioTrack.trackId]);
+
     const textTracksManager = playerManager.getTextTracksManager();
     const textTracks = textTracksManager.getTracks();
     console.log('TEXT_TRACKS', textTracks);
-    
-    addExternalTextTracks(externalTextTracks);
+
+    const firstTextTrack = textTracks[0];
+    firstTextTrack && textTracksManager.setActiveByIds([firstTextTrack.trackId]);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
