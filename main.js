@@ -21,6 +21,25 @@ context.addEventListener(EVENT.READY, () => {
 context.addCustomMessageListener(CUSTOM_NAMESPACE, (message) => {
     console.log(CUSTOM_NAMESPACE);
     console.log(message);
+
+    if (!message.data || !message.data.type) {
+        error.reason = ERROR_REASON.INVALID_PARAM;
+        return error;
+    }
+
+    if (message.data.type === 'externalTextTracks' && message.data.tracks) {
+        const textTracksManager = playerManager.getTextTracksManager();
+        
+        const tracks = message.data.tracks.map(({ mimeType, uri, language, label }) => {
+            const track = textTracksManager.createTrack();
+            track.trackContentType = mimeType;
+            track.trackContentId = uri;
+            track.language = language;
+            track.name = label;
+        });
+
+        textTracksManager.addTracks(tracks);
+    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
