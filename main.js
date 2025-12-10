@@ -44,15 +44,20 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         externalTextTracks = request.media.customData.externalTextTracks;
     }
 
-    const streamUrl = new URL(request.media.contentId);
+    try {
+        const streamUrl = new URL(request.media.contentId);
 
-    const { videoCodecs, audioCodecs } = getSupportedCodecs();
-    videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
-    audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+        const { videoCodecs, audioCodecs } = getSupportedCodecs();
+        videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
+        audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
 
-    // streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('forceTranscoding', 'true');
 
-    request.media.contentId = streamUrl.toString();
+        request.media.contentId = streamUrl.toString();
+    } catch(e) {
+        console.error('Failed to update transcode params');
+    }
 
     return request;
 });
