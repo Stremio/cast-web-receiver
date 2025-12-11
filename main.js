@@ -72,7 +72,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
-        const maxWidth = getSupportedMaxWidth();
+        const maxWidth = getSupportedMaxWidth(videoCodecs);
         streamUrl.searchParams.append('maxWidth', maxWidth);
         console.log('SUPPORTED_MAX_WIDTH', maxWidth);
 
@@ -144,12 +144,20 @@ const getSupportedCodecs = () => {
     };
 };
 
-const getSupportedMaxWidth = (videoCodec) => {
-    const mediaType = VIDEO_CODECS[videoCodec];
-    const maxResolution = RESOLUTIONS
-        .find(([width, height]) => context.canDisplayType(mediaType, null, width, height));
-    console.log(maxResolution);
+const getSupportedMaxWidth = (videoCodecs) => {
+    const maxWidths = videoCodecs
+        .map((codecName) => {
+            const mediaType = VIDEO_CODECS[codecName];
+            const maxResolution = RESOLUTIONS
+                .find(([width, height]) => context.canDisplayType(mediaType, null, width, height));
+            
+            return maxResolution ? maxResolution[0] : null;
+        })
+        .filter((width) => width !== null);
 
-    if (maxResolution) return maxResolution[0];
-    return RESOLUTIONS[RESOLUTIONS.length - 1][0];
+    if (maxWidths.length === 0) {
+        return RESOLUTIONS[RESOLUTIONS.length - 1][0];
+    }
+
+    return Math.min(...maxWidths);
 };
