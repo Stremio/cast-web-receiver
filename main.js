@@ -155,9 +155,6 @@ const getSupportedMaxWidth = (videoCodecs) => {
         })
         .filter((width) => width !== null);
 
-    if (maxWidths.length === 0) {
-        return RESOLUTIONS[RESOLUTIONS.length - 1][0];
-    }
-
-    return Math.min(...maxWidths);
+    if (maxWidths.length > 0) return Math.min(...maxWidths);
+    return RESOLUTIONS[RESOLUTIONS.length - 1][0];
 };
