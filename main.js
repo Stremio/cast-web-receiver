@@ -33,9 +33,9 @@ playbackConfig.shakaConfig = {
         bufferBehind: 3,
         retryParameters: {
             maxAttempts: 5,
-            baseDelay: 1000,
-            backoffFactor: 2,
-            fuzzFactor: 0.5,
+            timeout: 5000,
+            stallTimeout: 1000,
+            baseDelay: 0,
         },
     }
 };
