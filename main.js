@@ -92,44 +92,52 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 context.start(castReceiverOptions);
 
 const addExternalTextTracks = (externalTextTracks) => {
-    const textTracksManager = playerManager.getTextTracksManager();
+    try {
+        const textTracksManager = playerManager.getTextTracksManager();
 
-    const tracks = externalTextTracks.map(({ mimeType, uri, language, label }) => {
-        const track = textTracksManager.createTrack();
-        track.trackContentType = mimeType;
-        track.trackContentId = uri;
-        track.language = language;
-        track.name = label;
-        return track;
-    });
+        const tracks = externalTextTracks.map(({ mimeType, uri, language, label }) => {
+            const track = textTracksManager.createTrack();
+            track.trackContentType = mimeType;
+            track.trackContentId = uri;
+            track.language = language;
+            track.name = label;
+            return track;
+        });
 
-    textTracksManager.addTracks(tracks);
+        textTracksManager.addTracks(tracks);
 
-    console.log('ADD_EXTERNAL_TEXT_TRACKS', tracks);
+        console.log('ADD_EXTERNAL_TEXT_TRACKS', tracks);
+    } catch(e) {
+        console.error('Failed to add external text tracks', e);
+    }
 };
 
 const getSupportedCodecs = () => {
-    const canPlay = (codecs) => {
-        return Object.entries(codecs)
-            .filter(([mediaType]) => context.canDisplayType(mediaType))
-            .map(([, codecName]) => codecName);
-    };
+    try {
+        const canPlay = (codecs) => {
+            return Object.entries(codecs)
+                .filter(([mediaType]) => context.canDisplayType(mediaType))
+                .map(([, codecName]) => codecName);
+        };
 
-    const videoCodecs = {
-        'video/mp4; codecs="vp8"': 'vp8',
-        'video/mp4; codecs="vp9"': 'vp9',
-        'video/mp4; codecs="avc1.42E01E"': 'h264',
-        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
-    };
+        const videoCodecs = {
+            'video/mp4; codecs="vp8"': 'vp8',
+            'video/mp4; codecs="vp9"': 'vp9',
+            'video/mp4; codecs="avc1.42E01E"': 'h264',
+            'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
+        };
 
-    const audioCodecs = {
-        'audio/mp4; codecs="vorbis"': 'vorbis',
-        'audio/mp4; codecs="mp4a.40.5"': 'aac',
-        'audio/mp4; codecs="mp4a.69"': 'mp3',
-    };
-    
-    return {
-        videoCodecs: canPlay(videoCodecs),
-        audioCodecs: canPlay(audioCodecs),
-    };
+        const audioCodecs = {
+            'audio/mp4; codecs="vorbis"': 'vorbis',
+            'audio/mp4; codecs="mp4a.40.5"': 'aac',
+            'audio/mp4; codecs="mp4a.69"': 'mp3',
+        };
+        
+        return {
+            videoCodecs: canPlay(videoCodecs),
+            audioCodecs: canPlay(audioCodecs),
+        };
+    } catch(e) {
+        console.error('Failed to get supported codecs', e);
+    }
 };
