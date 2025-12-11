@@ -29,14 +29,6 @@ playbackConfig.shakaConfig = {
     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
     streaming: {
         preferNativeHls: true,
-        bufferingGoal: 10,
-        bufferBehind: 3,
-        // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
-        retryParameters: {
-            maxAttempts: 5,
-            timeout: 10000,
-            baseDelay: 0,
-        },
     }
 };
 
