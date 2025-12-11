@@ -8,7 +8,7 @@ playbackConfig.autoResumeDuration = 5;
 
 const options = new cast.framework.CastReceiverOptions();
 options.useShakaForHls = true;
-options.shakaVersion = 'v4.16.11';
+options.shakaVersion = '4.16.11';
 options.playbackConfig = playbackConfig;
 
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
