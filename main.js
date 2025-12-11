@@ -3,7 +3,18 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
+const castReceiverOptions = new cast.framework.CastReceiverOptions();
+castReceiverOptions.useShakaForHls = true;
+
+const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
+castDebugLogger.loggerLevelByEvents = {
+    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
+    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
+};
+
 const context = cast.framework.CastReceiverContext.getInstance();
+context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
+
 const playerManager = context.getPlayerManager();
 
 const playbackConfig = new cast.framework.PlaybackConfig();
@@ -18,13 +29,14 @@ playbackConfig.autoResumeNumberOfSegments = 1;
 console.log('PLAYBACK_CONFIG', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
 
-const castReceiverOptions = new cast.framework.CastReceiverOptions();
-castReceiverOptions.useShakaForHls = true;
-
 let externalTextTracks = [];
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
+
+    if (!castDebugLogger.debugOverlayElement_) {
+        castDebugLogger.setEnabled(true);
+    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
