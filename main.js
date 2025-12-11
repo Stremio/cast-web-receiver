@@ -3,6 +3,24 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
+const VIDEO_CODECS = {
+    'h264': 'video/mp4; codecs="avc1.42E01E"',
+    'h265': 'video/mp4; codecs="hev1.1.6.L150.B0"',
+};
+
+const AUDIO_CODECS = {
+    'aac': 'audio/mp4; codecs="mp4a.40.5"',
+    'mp3': 'audio/mp4; codecs="mp4a.69"',
+};
+
+const RESOLUTIONS = [
+    [3840, 2160],
+    [2560, 1440],
+    [1920, 1080],
+    [1280, 720],
+    [854, 480],
+];
+
 const context = cast.framework.CastReceiverContext.getInstance();
 const playerManager = context.getPlayerManager();
 
@@ -51,6 +69,9 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         const { videoCodecs, audioCodecs } = getSupportedCodecs();
         videoCodecs.forEach((codec) => streamUrl.searchParams.append('videoCodecs', codec));
         audioCodecs.forEach((codec) => streamUrl.searchParams.append('audioCodecs', codec));
+
+        const maxWidth = getSupportedMaxWidth();
+        streamUrl.searchParams.append('maxWidth', maxWidth);
 
         streamUrl.searchParams.append('maxAudioChannels', 2);
 
@@ -110,22 +131,21 @@ const addExternalTextTracks = (externalTextTracks) => {
 const getSupportedCodecs = () => {
     const canPlay = (codecs) => {
         return Object.entries(codecs)
-            .filter(([mediaType]) => context.canDisplayType(mediaType))
-            .map(([, codecName]) => codecName);
+            .filter(([, mediaType]) => context.canDisplayType(mediaType))
+            .map(([codecName]) => codecName);
     };
 
-    const videoCodecs = {
-        'video/mp4; codecs="avc1.42E01E"': 'h264',
-        'video/mp4; codecs="hev1.1.6.L150.B0"': 'h265',
-    };
-
-    const audioCodecs = {
-        'audio/mp4; codecs="mp4a.40.5"': 'aac',
-        'audio/mp4; codecs="mp4a.69"': 'mp3',
-    };
-    
     return {
-        videoCodecs: canPlay(videoCodecs),
-        audioCodecs: canPlay(audioCodecs),
+        videoCodecs: canPlay(VIDEO_CODECS),
+        audioCodecs: canPlay(AUDIO_CODECS),
     };
+};
+
+const getSupportedMaxWidth = (videoCodec) => {
+    const mediaType = VIDEO_CODECS[videoCodec];
+    const maxResolution = RESOLUTIONS
+        .find(([width, height]) => context.canDisplayType(mediaType, null, width, height));
+
+    if (maxResolution) return maxResolution[0];
+    return RESOLUTIONS[RESOLUTIONS.length - 1][0];
 };
