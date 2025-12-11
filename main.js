@@ -3,18 +3,7 @@ const EVENT = cast.framework.events.EventType;
 const ERROR = cast.framework.messages.ErrorType;
 const ERROR_REASON = cast.framework.messages.ErrorReason;
 
-const castReceiverOptions = new cast.framework.CastReceiverOptions();
-castReceiverOptions.useShakaForHls = true;
-
-const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
-castDebugLogger.loggerLevelByEvents = {
-    'cast.framework.events.category.CORE': cast.framework.LoggerLevel.INFO,
-    'cast.framework.events.EventType.MEDIA_STATUS': cast.framework.LoggerLevel.DEBUG,
-};
-
 const context = cast.framework.CastReceiverContext.getInstance();
-context.setLoggerLevel(cast.framework.LoggerLevel.DEBUG);
-
 const playerManager = context.getPlayerManager();
 
 const playbackConfig = new cast.framework.PlaybackConfig();
@@ -25,24 +14,17 @@ playbackConfig.manifestRequestHandler = (requestInfo) => {
 
 playbackConfig.autoResumeDuration = 5;
 playbackConfig.autoResumeNumberOfSegments = 1;
-playbackConfig.shakaConfig = {
-    // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
-    streaming: {
-        preferNativeHls: true,
-    }
-};
 
 console.log('PLAYBACK_CONFIG', playbackConfig);
 playerManager.setPlaybackConfig(playbackConfig);
+
+const castReceiverOptions = new cast.framework.CastReceiverOptions();
+castReceiverOptions.useShakaForHls = true;
 
 let externalTextTracks = [];
 
 context.addEventListener(EVENT.READY, () => {
     console.log('READY');
-
-    if (!castDebugLogger.debugOverlayElement_) {
-        castDebugLogger.setEnabled(true);
-    }
 });
 
 playerManager.addEventListener(EVENT.MEDIA_STATUS, (event) => {
@@ -71,7 +53,7 @@ playerManager.setMessageInterceptor(MESSAGE.LOAD, (request) => {
         console.log('SUPPORTED_VIDEO_CODECS', videoCodecs);
         console.log('SUPPORTED_AUDIO_CODECS', audioCodecs);
 
-        // streamUrl.searchParams.append('maxAudioChannels', 2);
+        streamUrl.searchParams.append('maxAudioChannels', 2);
 
         request.media.contentId = streamUrl.toString();
     } catch(e) {
