@@ -118,7 +118,7 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
     return request;
 });
 
-playerManager.addEventListener(MESSAGE.REQUEST_STOP, (event) => {
+playerManager.addEventListener(EVENT.REQUEST_STOP, (event) => {
     console.log('REQUEST_STOP', event);
 
     transcodeInfoInterval && clearInterval(transcodeInfoInterval);
