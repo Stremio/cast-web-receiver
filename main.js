@@ -14,6 +14,7 @@ playbackConfig.shakaConfig = {
         // preferNativeHls: true,
         bufferingGoal: 4 * 3,
         bufferBehind: 0,
+        lowLatencyMode: false,
         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
         // retryParameters: {
         //     // maxAttempts: 3,
