@@ -128,6 +128,11 @@ playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
 playerManager.addEventListener(EVENT.REQUEST_STOP, (event) => {
     console.log('REQUEST_STOP', event);
 
+    videoCodecElement.innerText = 'Loading';
+    audioCodecElement.innerText = 'Loading';
+    videoTranscoding.innerText = 'Loading';
+    audioTranscoding.innerText = 'Loading';
+
     streamInfoInterval && clearInterval(streamInfoInterval);
     streamInfoInterval = null;
 });
