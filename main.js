@@ -103,7 +103,8 @@ playerManager.addEventListener(EVENT.PLAYER_LOAD_COMPLETE, () => {
         console.log('Failed to get tracks info', e);
     }
 
-    updateStreamInfo();
+    streamInfoInterval && clearInterval(streamInfoInterval);
+    streamInfoInterval = setInterval(updateStreamInfo, 5000);
 });
 
 playerManager.setMessageInterceptor(MESSAGE.EDIT_TRACKS_INFO, (request) => {
@@ -172,8 +173,7 @@ const getSupportedCodecs = () => {
 };
 
 const updateStreamInfo = () => {
-    streamInfoInterval && clearInterval(streamInfoInterval);
-    streamInfoInterval = setInterval(() => {
+    try {
         if (!streamUrl) return;
 
         const { origin } = streamUrl;
@@ -204,5 +204,7 @@ const updateStreamInfo = () => {
             .catch((e) => {
                 console.error('Failed to get transcode data', e);
             });
-    } , 3000);
+    } catch(e) {
+        console.error('Failed to update stream info', e);
+    }
 };
