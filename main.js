@@ -200,10 +200,10 @@ const updateStreamInfo = () => {
                     isAudioTranscoding,
                 } = body;
 
-                videoCodecElement.innerText = originalVideoCodec;
-                audioCodecElement.innerText = originalAudioCodec;
-                videoTranscoding.innerText = isVideoTranscoding;
-                audioTranscoding.innerText = isAudioTranscoding;
+                videoCodecElement.innerText = originalVideoCodec ?? 'Loading';
+                audioCodecElement.innerText = originalAudioCodec ?? 'Loading';
+                videoTranscoding.innerText = isVideoTranscoding ?? 'Loading';
+                audioTranscoding.innerText = isAudioTranscoding ?? 'Loading';
 
                 console.log('TRANSCODING_INFO', body);
             })

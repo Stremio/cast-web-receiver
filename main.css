@@ -12,12 +12,20 @@ cast-media-player {
 
 #stream-info {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 0.5rem;
+    right: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
     background-color: black;
+}
+
+#stream-info h6 {
+    font-family: 'Plus Jakarta Sans';
+    color: white;
+    opacity: 0.8;
 }
 
 #stream-info p {
