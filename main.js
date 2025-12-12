@@ -8,41 +8,24 @@ playbackConfig.autoResumeDuration = 5;
 playbackConfig.autoPauseDuration = 0;
 playbackConfig.autoResumeNumberOfSegments = 1;
 // playbackConfig.enableUITextDisplayer = false;
-playbackConfig.shakaConfig = {
-    // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
-    streaming: {
-        lowLatencyMode: false,
-        bufferBehind: 30,
-        bufferingGoal: 50,
-        retryParameters: {
-            maxAttempts: 20,
-            timeout: 30000,
-            stallTimeout: 10000,
-            connectionTimeout: 120000,
-            baseDelay: 1000,
-            backoffFactor: 1.0,
-            fuzzFactor: 0,
-        },
-    },
-    manifest: {
-        retryParameters: {
-            maxAttempts: 10,
-            timeout: 30000,
-            baseDelay: 1000,
-            backoffFactor: 2.0,
-            fuzzFactor: 0.5,
-        },
-        defaultPresentationDelay: 3,
-        availabilityWindowOverride: 0,
-    },
-};
+// playbackConfig.shakaConfig = {
+//     // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.StreamingConfiguration
+//     streaming: {
+//         // preferNativeHls: true,
+//         bufferingGoal: 4,
+//         bufferBehind: 4,
+//         // https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html#.RetryParameters
+//         retryParameters: {
+//             // maxAttempts: 3,
+//             connectionTimeout: 30000,
+//         },
+//     },
+// };
 
 const options = new cast.framework.CastReceiverOptions();
 options.useShakaForHls = true;
 // options.shakaVersion = '4.16.11';
 options.playbackConfig = playbackConfig;
-
-console.log('OPTIONS', options);
 
 const castDebugLogger = cast.debug.CastDebugLogger.getInstance();
 castDebugLogger.loggerLevelByEvents = {
